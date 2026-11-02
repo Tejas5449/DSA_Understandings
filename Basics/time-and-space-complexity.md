@@ -1,205 +1,55 @@
-# Chapter 1 — DSA Basics
+# Time & Space Complexity
 
-Welcome to my **Data Structures and Algorithms** learning repository.
+## 1. What is Time Complexity?
 
-This chapter covers the fundamental concepts that are required before starting Data Structures and Algorithms.
+When we write a program, we want to understand:
 
-## Topics Covered
+> **How does the running time of our program change when the input size becomes larger?**
 
-1. [What is DSA?](#1-what-is-dsa)
-2. [What is an Algorithm?](#2-what-is-an-algorithm)
-3. [What is a Data Structure?](#3-what-is-a-data-structure)
-4. [Time Complexity](#4-time-complexity)
-5. [Big O Notation](#5-big-o-notation)
-6. [Common Time Complexities](#6-common-time-complexities)
-7. [How to Calculate Time Complexity](#7-how-to-calculate-time-complexity)
-8. [Space Complexity](#8-space-complexity)
-9. [Time-Space Tradeoff](#9-time-space-tradeoff)
-10. [Best, Average and Worst Case](#10-best-average-and-worst-case)
-11. [Recursion](#11-recursion)
-12. [Base Case and Recursive Case](#12-base-case-and-recursive-case)
-13. [Call Stack](#13-call-stack)
-14. [Recursion Examples](#14-recursion-examples)
-15. [Recursion vs Iteration](#15-recursion-vs-iteration)
-16. [Common Beginner Mistakes](#16-common-beginner-mistakes)
-17. [Interview Questions](#17-interview-questions)
-18. [Practice Problems](#18-practice-problems)
-19. [Key Takeaways](#19-key-takeaways)
-
----
-
-# 1. What is DSA?
-
-**DSA** stands for:
-
-> **Data Structures and Algorithms**
-
-It is one of the most important foundations of programming and problem solving.
-
-DSA helps us answer two questions:
-
-1. How should we **store data**?
-2. How should we **process that data efficiently**?
-
-For example, suppose we have:
-
-```text
-10, 20, 30, 40, 50
-```
-
-We need to decide:
-
-- How should we store these values?
-- How can we search for a value?
-- How can we insert a new value?
-- How can we delete a value?
-- How can we sort the values?
-
-DSA gives us the concepts and techniques to solve these problems efficiently.
-
----
-
-# 2. What is an Algorithm?
-
-An **algorithm** is a step-by-step procedure used to solve a problem.
-
-For example, suppose we want to find the largest number in an array.
-
-Input:
-
-```text
-[10, 25, 7, 50, 30]
-```
-
-We can solve it using these steps:
-
-```text
-1. Assume the first number is the largest.
-2. Compare it with the next number.
-3. If the next number is larger, update the largest number.
-4. Continue until the array ends.
-5. Return the largest number.
-```
-
-Java implementation:
-
-```java
-public static int findMaximum(int[] numbers) {
-
-    int max = numbers[0];
-
-    for (int number : numbers) {
-
-        if (number > max) {
-            max = number;
-        }
-    }
-
-    return max;
-}
-```
-
-Output:
-
-```text
-50
-```
-
-The code is the implementation of the algorithm.
-
----
-
-# 3. What is a Data Structure?
-
-A **data structure** is a way of organizing and storing data so that we can use it efficiently.
-
-Some common data structures are:
-
-```text
-Array
-Linked List
-Stack
-Queue
-HashMap
-HashSet
-Tree
-Heap
-Graph
-```
-
-For example:
-
-## Array
+Consider this array:
 
 ```java
 int[] numbers = {10, 20, 30, 40, 50};
 ```
 
-Arrays store elements in an indexed structure.
+Suppose we want to find `30`.
 
-We can access:
+We can check each element one by one:
 
 ```java
-numbers[0]; // 10
-numbers[2]; // 30
-numbers[4]; // 50
+for (int i = 0; i < numbers.length; i++) {
+
+    if (numbers[i] == 30) {
+        System.out.println("Found");
+        break;
+    }
+}
 ```
+
+For 5 elements, this is very fast.
+
+But imagine the input grows:
+
+```text
+5 elements
+100 elements
+10,000 elements
+1,000,000 elements
+```
+
+The important question becomes:
+
+> **How does the amount of work grow as the input size grows?**
+
+This is what **Time Complexity** helps us understand.
 
 ---
 
-## Stack
+# 2. What is Big O Notation?
 
-A Stack follows:
+**Big O notation** describes how the time or space requirements of an algorithm grow as the input size increases.
 
-> **LIFO — Last In, First Out**
-
-Example:
-
-```text
-        ┌───────┐
-        │   30  │ ← Top
-        ├───────┤
-        │   20  │
-        ├───────┤
-        │   10  │
-        └───────┘
-```
-
-If we remove an element:
-
-```text
-30
-```
-
-comes out first.
-
----
-
-## Queue
-
-A Queue follows:
-
-> **FIFO — First In, First Out**
-
-Example:
-
-```text
-10 → 20 → 30 → 40
-↑
-Front
-```
-
-`10` will be removed first.
-
----
-
-# 4. Time Complexity
-
-Time Complexity describes:
-
-> **How the amount of work performed by an algorithm grows as the input size grows.**
-
-We usually represent the input size using:
+We normally represent the input size using:
 
 ```text
 n
@@ -232,10 +82,10 @@ the loop runs approximately 100 times.
 If:
 
 ```text
-n = 1,000,000
+n = 1,000
 ```
 
-the loop runs approximately 1,000,000 times.
+the loop runs approximately 1,000 times.
 
 Therefore:
 
@@ -245,54 +95,80 @@ Time Complexity = O(n)
 
 ---
 
-# 5. Big O Notation
+# 3. Why Do We Use Big O?
 
-**Big O notation** is used to describe the growth rate of an algorithm.
+We don't usually measure algorithms using exact execution time because execution time depends on many external factors:
 
-Some common Big O complexities are:
+- Computer hardware
+- CPU speed
+- Programming language
+- Compiler
+- Operating system
+- Background processes
+- Input data
 
-```text
-O(1)
-O(log n)
-O(n)
-O(n log n)
-O(n²)
-O(n³)
-O(2ⁿ)
-O(n!)
-```
+Instead, we focus on how the algorithm **scales** as the input becomes larger.
 
-The general order from better to worse is:
+For example:
 
 ```text
-O(1)
-   ↓
-O(log n)
-   ↓
-O(n)
-   ↓
-O(n log n)
-   ↓
-O(n²)
-   ↓
-O(n³)
-   ↓
-O(2ⁿ)
-   ↓
-O(n!)
+Algorithm A → O(n)
+
+Algorithm B → O(n²)
 ```
 
-As the input becomes very large, algorithms with lower complexity generally perform better.
+For small inputs, both may appear fast.
+
+But when `n` becomes very large, `O(n²)` grows much faster than `O(n)`.
+
+Therefore, Big O helps us compare algorithms based on their growth rate.
 
 ---
 
-# 6. Common Time Complexities
+# 4. Common Time Complexities
 
-## 6.1 O(1) — Constant Time
+The most common complexities you should know are:
 
-The amount of work does not depend on the input size.
+| Big O | Name | Example |
+|---|---|---|
+| `O(1)` | Constant | Array access |
+| `O(log n)` | Logarithmic | Binary Search |
+| `O(n)` | Linear | Single loop |
+| `O(n log n)` | Linearithmic | Merge Sort |
+| `O(n²)` | Quadratic | Nested loops |
+| `O(n³)` | Cubic | Three nested loops |
+| `O(2ⁿ)` | Exponential | Some recursive algorithms |
+| `O(n!)` | Factorial | Permutations |
 
-Example:
+A useful order to remember:
+
+```text
+O(1)
+   ↓
+O(log n)
+   ↓
+O(n)
+   ↓
+O(n log n)
+   ↓
+O(n²)
+   ↓
+O(n³)
+   ↓
+O(2ⁿ)
+   ↓
+O(n!)
+```
+
+Generally, the lower the growth rate, the better the algorithm performs for large inputs.
+
+---
+
+# 5. O(1) — Constant Time
+
+`O(1)` means the amount of work does not depend on the input size.
+
+Consider:
 
 ```java
 int[] numbers = {10, 20, 30, 40, 50};
@@ -322,15 +198,36 @@ Therefore:
 Time Complexity = O(1)
 ```
 
+### Another Example
+
+```java
+int a = 10;
+int b = 20;
+
+int sum = a + b;
+```
+
+The number of operations remains constant.
+
+Therefore:
+
+```text
+Time Complexity = O(1)
+```
+
 ### Important
 
-`O(1)` does not mean the operation takes exactly one second.
+`O(1)` does **not** mean one second.
 
-It means the amount of work remains constant as the input grows.
+It means:
+
+> The amount of work does not grow with the input size.
 
 ---
 
-# 6.2 O(n) — Linear Time
+# 6. O(n) — Linear Time
+
+`O(n)` means the amount of work grows linearly with the input size.
 
 Example:
 
@@ -340,7 +237,7 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-The loop runs `n` times.
+The loop executes `n` times.
 
 Therefore:
 
@@ -348,39 +245,63 @@ Therefore:
 Time Complexity = O(n)
 ```
 
-Example:
+### Example
 
 ```text
-n = 5       → 5 operations
-n = 100     → 100 operations
-n = 10,000  → 10,000 operations
+n = 5
+
+5 operations
 ```
 
-The work grows linearly with the input.
+```text
+n = 100
+
+100 operations
+```
+
+```text
+n = 10,000
+
+10,000 operations
+```
+
+The amount of work increases proportionally with `n`.
 
 ---
 
-# 6.3 O(log n) — Logarithmic Time
+# 7. O(log n) — Logarithmic Time
 
-A common example is **Binary Search**.
+`O(log n)` means the input is reduced significantly, usually by a factor such as `2`, during each step.
 
-Suppose we have:
+The most common example is:
+
+> **Binary Search**
+
+Suppose we have a sorted array:
 
 ```text
 [10, 20, 30, 40, 50, 60, 70, 80]
 ```
 
-Instead of checking every element, Binary Search repeatedly divides the search area into half.
+We want to find:
+
+```text
+70
+```
+
+Instead of checking every element, Binary Search repeatedly divides the search area in half.
 
 ```text
 8 elements
-    ↓
+     ↓
 4 elements
-    ↓
+     ↓
 2 elements
-    ↓
+     ↓
 1 element
 ```
+
+The search space keeps getting smaller.
 
 Therefore:
 
@@ -388,15 +309,17 @@ Therefore:
 Time Complexity = O(log n)
 ```
 
+### Important
+
 Binary Search requires the data to be sorted.
 
 ---
 
-# 6.4 O(n log n)
+# 8. O(n log n) — Linearithmic Time
 
-This complexity commonly appears in efficient sorting algorithms.
+`O(n log n)` is commonly found in efficient sorting algorithms.
 
-Examples:
+Examples include:
 
 ```text
 Merge Sort
@@ -404,17 +327,35 @@ Heap Sort
 Average-case Quick Sort
 ```
 
-For example:
+Merge Sort works by repeatedly dividing the array.
+
+Conceptually:
 
 ```text
-Time Complexity = O(n log n)
+             n
+           /   \
+         n/2   n/2
+        / \     / \
+      n/4 n/4 n/4 n/4
 ```
 
-Merge Sort divides the array repeatedly and processes the elements at each level.
+The division creates approximately `log n` levels.
+
+At each level, we process approximately `n` elements.
+
+Therefore:
+
+```text
+n × log n
+
+= O(n log n)
+```
 
 ---
 
-# 6.5 O(n²) — Quadratic Time
+# 9. O(n²) — Quadratic Time
+
+`O(n²)` usually appears when we have two nested loops.
 
 Example:
 
@@ -428,14 +369,24 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-The outer loop runs `n` times.
+The outer loop runs:
 
-For every iteration, the inner loop also runs `n` times.
+```text
+n times
+```
+
+For every iteration of the outer loop, the inner loop runs:
+
+```text
+n times
+```
 
 Therefore:
 
 ```text
-n × n = n²
+n × n
+
+= n²
 ```
 
 So:
@@ -444,11 +395,39 @@ So:
 Time Complexity = O(n²)
 ```
 
-This type of complexity commonly appears when comparing every element with every other element.
+### Example
+
+If:
+
+```text
+n = 10
+```
+
+approximately:
+
+```text
+10 × 10 = 100 operations
+```
+
+If:
+
+```text
+n = 1,000
+```
+
+approximately:
+
+```text
+1,000 × 1,000 = 1,000,000 operations
+```
+
+This shows why quadratic algorithms become expensive for large inputs.
 
 ---
 
-# 6.6 O(n³) — Cubic Time
+# 10. O(n³) — Cubic Time
+
+`O(n³)` usually occurs with three nested loops.
 
 Example:
 
@@ -465,21 +444,25 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-There are three nested loops.
+The loops execute:
+
+```text
+n × n × n
+```
 
 Therefore:
 
 ```text
-O(n × n × n)
-
-= O(n³)
+Time Complexity = O(n³)
 ```
 
 ---
 
-# 6.7 O(2ⁿ) — Exponential Time
+# 11. O(2ⁿ) — Exponential Time
 
-Exponential complexity commonly appears in recursive algorithms where each function call creates multiple additional calls.
+`O(2ⁿ)` means the amount of work approximately doubles as the input increases by one.
+
+This commonly appears in recursive algorithms that create multiple branches.
 
 Example:
 
@@ -494,19 +477,33 @@ public static int fibonacci(int n) {
 }
 ```
 
-The number of calls grows very quickly.
+The function creates multiple recursive calls.
 
-Therefore, the simple recursive Fibonacci implementation has exponential time complexity.
+Conceptually:
 
 ```text
-O(2ⁿ)
+                  fibonacci(n)
+                 /           \
+        fibonacci(n-1)     fibonacci(n-2)
+          /       \
+       ...        ...
+```
+
+The number of calls grows very quickly.
+
+The simple recursive Fibonacci implementation has approximately:
+
+```text
+Time Complexity = O(2ⁿ)
 ```
 
 ---
 
-# 6.8 O(n!) — Factorial Time
+# 12. O(n!) — Factorial Time
 
-Factorial complexity is commonly seen when generating all possible permutations.
+`O(n!)` is one of the fastest-growing complexity classes.
+
+It commonly appears when generating all permutations.
 
 For example:
 
@@ -524,7 +521,7 @@ For example:
 10! = 3,628,800
 ```
 
-This grows extremely quickly.
+The number of possibilities grows extremely quickly.
 
 Therefore:
 
@@ -534,13 +531,15 @@ Time Complexity = O(n!)
 
 ---
 
-# 7. How to Calculate Time Complexity
+# 13. How to Calculate Big O
 
-Learning how to calculate Big O is extremely important for DSA interviews.
+Learning to calculate Big O is one of the most important DSA skills.
+
+Let's look at different examples.
 
 ---
 
-## Example 1 — One Loop
+## Example 1 — Single Loop
 
 ```java
 for (int i = 0; i < n; i++) {
@@ -591,7 +590,7 @@ O(n) + O(n)
 = O(2n)
 ```
 
-We ignore constants:
+We ignore the constant:
 
 ```text
 O(n)
@@ -610,9 +609,7 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-The loops are nested.
-
-Therefore:
+Because the loops are nested:
 
 ```text
 O(n × n)
@@ -646,54 +643,44 @@ O(n × n × n)
 
 ---
 
-## Example 5 — Loop with a Constant
+# 14. Ignore Constants
 
-```java
-for (int i = 0; i < n; i++) {
+Consider:
 
-    System.out.println(i);
-}
-
-for (int i = 0; i < 100; i++) {
-
-    System.out.println(i);
-}
+```text
+O(2n)
 ```
 
-First loop:
+We simplify this to:
 
 ```text
 O(n)
 ```
 
-Second loop:
+Why?
+
+Because Big O focuses on the **growth rate**, not the exact number of operations.
+
+Similarly:
 
 ```text
-O(100)
+O(5n)
+→ O(n)
 ```
 
-Since `100` is a constant:
-
 ```text
-O(100) = O(1)
-```
-
-Therefore:
-
-```text
-O(n) + O(1)
-
-= O(n)
+O(100n)
+→ O(n)
 ```
 
 ---
 
-## Example 6 — Dominant Term
+# 15. Ignore Lower-Order Terms
 
 Consider:
 
 ```text
-O(n² + n + 10)
+O(n² + n)
 ```
 
 When `n` becomes very large, `n²` grows much faster than `n`.
@@ -701,22 +688,128 @@ When `n` becomes very large, `n²` grows much faster than `n`.
 Therefore:
 
 ```text
-O(n² + n + 10)
+O(n² + n)
 
 = O(n²)
 ```
 
-We keep the dominant term.
+Another example:
+
+```text
+O(n³ + n² + n + 10)
+```
+
+The dominant term is:
+
+```text
+n³
+```
+
+Therefore:
+
+```text
+O(n³)
+```
+
+### Rule
+
+> **Keep the term that grows the fastest.**
 
 ---
 
-# 8. Space Complexity
+# 16. Sequential vs Nested Loops
 
-Space Complexity describes:
+This is a very common interview question.
 
-> **How much additional memory an algorithm requires as the input grows.**
+### Sequential Loops
+
+```java
+for (int i = 0; i < n; i++) {
+
+}
+
+for (int j = 0; j < n; j++) {
+
+}
+```
+
+Complexity:
+
+```text
+O(n) + O(n)
+
+= O(n)
+```
+
+---
+
+### Nested Loops
+
+```java
+for (int i = 0; i < n; i++) {
+
+    for (int j = 0; j < n; j++) {
+
+    }
+}
+```
+
+Complexity:
+
+```text
+O(n × n)
+
+= O(n²)
+```
+
+### Remember
+
+```text
+Sequential loops → Add
+
+Nested loops → Multiply
+```
+
+This is a useful beginner rule.
+
+---
+
+# 17. Different Input Sizes
+
+Sometimes loops depend on different input variables.
 
 Example:
+
+```java
+for (int i = 0; i < n; i++) {
+
+    for (int j = 0; j < m; j++) {
+
+    }
+}
+```
+
+The complexity is:
+
+```text
+O(n × m)
+```
+
+We should **not** automatically write `O(n²)` because `n` and `m` may be different.
+
+---
+
+# 18. Space Complexity
+
+Time Complexity tells us:
+
+> How much work does the algorithm perform?
+
+Space Complexity tells us:
+
+> How much additional memory does the algorithm require?
+
+Consider:
 
 ```java
 public static int findMaximum(int[] numbers) {
@@ -734,7 +827,7 @@ public static int findMaximum(int[] numbers) {
 }
 ```
 
-We only use a few variables:
+We only create a few variables:
 
 ```text
 max
@@ -751,7 +844,7 @@ Auxiliary Space = O(1)
 
 ---
 
-# 8.1 O(n) Space
+# 19. O(n) Space
 
 Consider:
 
@@ -769,7 +862,7 @@ Space Complexity = O(n)
 
 ---
 
-# 8.2 O(n²) Space
+# 20. O(n²) Space
 
 Consider:
 
@@ -777,7 +870,7 @@ Consider:
 int[][] matrix = new int[n][n];
 ```
 
-We create:
+The matrix contains:
 
 ```text
 n × n
@@ -793,55 +886,110 @@ Space Complexity = O(n²)
 
 ---
 
-# 9. Time-Space Tradeoff
+# 21. Input Space vs Auxiliary Space
 
-Sometimes we use additional memory to make an algorithm faster.
+This distinction is important.
+
+Suppose we have:
+
+```java
+public static int findMaximum(int[] numbers) {
+
+    int max = numbers[0];
+
+    for (int number : numbers) {
+
+        if (number > max) {
+            max = number;
+        }
+    }
+
+    return max;
+}
+```
+
+The input array already exists.
+
+We don't create another array.
+
+So the **auxiliary space** is:
+
+```text
+O(1)
+```
+
+When discussing algorithm space complexity, interviewers often care about **auxiliary space**, meaning the additional memory used by the algorithm.
+
+---
+
+# 22. Time-Space Tradeoff
+
+Sometimes we use more memory to make an algorithm faster.
 
 This is called a:
 
 > **Time-Space Tradeoff**
 
-Example: Two Sum.
+A classic example is **Two Sum**.
 
-## Brute Force
+Suppose:
+
+```text
+numbers = [2, 7, 11, 15]
+target = 9
+```
+
+We need to find:
+
+```text
+2 + 7 = 9
+```
+
+### Brute Force
+
+We can compare every pair.
 
 ```text
 Time:  O(n²)
 Space: O(1)
 ```
 
-## Using HashMap
+### Using HashMap
+
+We can store values in a HashMap.
 
 ```text
 Time:  O(n)
 Space: O(n)
 ```
 
-We use additional memory to improve execution time.
+We use additional memory to reduce the time.
 
-This concept is extremely important in DSA.
+This is one of the most important concepts in DSA.
 
 ---
 
-# 10. Best, Average and Worst Case
+# 23. Best, Average and Worst Case
 
 An algorithm can behave differently depending on the input.
 
-Consider searching for an element in an array:
+Consider Linear Search:
 
-```text
-[10, 20, 30, 40, 50]
+```java
+int[] numbers = {10, 20, 30, 40, 50};
 ```
 
-Suppose we search for `10`.
+Suppose we search for:
+
+```text
+10
+```
 
 It is the first element.
 
 Only one comparison is required.
 
-This is the:
-
-> **Best Case**
+Therefore:
 
 ```text
 Best Case = O(1)
@@ -849,21 +997,29 @@ Best Case = O(1)
 
 ---
 
-If we search for `50`, we may need to check every element.
+If we search for:
 
-This can be:
+```text
+50
+```
+
+we may need to check every element.
+
+Therefore:
 
 ```text
 Worst Case = O(n)
 ```
 
-If the searched value is somewhere in the middle, we can consider this an average scenario.
+---
+
+If the element is somewhere in the middle, we can consider the average behavior.
 
 ```text
 Average Case = O(n)
 ```
 
-For Linear Search:
+Therefore, for a basic Linear Search:
 
 ```text
 Best Case:    O(1)
@@ -873,561 +1029,325 @@ Worst Case:   O(n)
 
 ---
 
-# 11. Recursion
+# 24. Complexity of Common Operations
 
-Recursion is a technique where a function calls itself.
+Here is a quick reference:
 
-Example:
+| Operation | Complexity |
+|---|---:|
+| Access array element | `O(1)` |
+| Update array element | `O(1)` |
+| Linear Search | `O(n)` |
+| Binary Search | `O(log n)` |
+| Traverse array | `O(n)` |
+| Compare every pair | `O(n²)` |
+| Merge Sort | `O(n log n)` |
 
-```java
-public static void printNumber(int n) {
-
-    if (n == 0) {
-        return;
-    }
-
-    System.out.println(n);
-
-    printNumber(n - 1);
-}
-```
-
-Calling:
-
-```java
-printNumber(5);
-```
-
-produces:
-
-```text
-5
-4
-3
-2
-1
-```
-
-The function keeps calling itself with a smaller value.
+We will study these data structures and algorithms in detail in later chapters.
 
 ---
 
-# 12. Base Case and Recursive Case
+# 25. Complexity Growth Example
 
-Every recursive function generally contains two important parts:
+Let's compare how the number of operations grows.
 
-## 12.1 Base Case
+For `n = 10`:
 
-The condition that stops recursion.
+| Complexity | Approx. Operations |
+|---|---:|
+| `O(1)` | 1 |
+| `O(log n)` | ~3 |
+| `O(n)` | 10 |
+| `O(n log n)` | ~30 |
+| `O(n²)` | 100 |
+| `O(n³)` | 1,000 |
+| `O(2ⁿ)` | 1,024 |
+| `O(n!)` | 3,628,800 |
 
-Example:
-
-```java
-if (n == 0) {
-    return;
-}
-```
-
-Without a proper base case, recursion may continue indefinitely and eventually cause:
-
-```text
-StackOverflowError
-```
+This is why choosing the right algorithm becomes increasingly important as the input grows.
 
 ---
 
-## 12.2 Recursive Case
+# 26. Real-World Example
 
-The part where the function calls itself.
-
-Example:
-
-```java
-printNumber(n - 1);
-```
-
-Complete example:
-
-```java
-public static void printNumber(int n) {
-
-    // Base Case
-    if (n == 0) {
-        return;
-    }
-
-    // Work
-    System.out.println(n);
-
-    // Recursive Case
-    printNumber(n - 1);
-}
-```
-
----
-
-# 13. Call Stack
-
-To understand recursion, we need to understand the **Call Stack**.
-
-Consider:
-
-```java
-printNumber(3);
-```
-
-The calls happen like this:
+Imagine you have a list of:
 
 ```text
-printNumber(3)
-       ↓
-printNumber(2)
-       ↓
-printNumber(1)
-       ↓
-printNumber(0)
-       ↓
-return
+1,000,000 users
 ```
 
-The stack looks conceptually like:
+You want to find a specific user.
 
-```text
-┌─────────────────┐
-│ printNumber(0)  │
-├─────────────────┤
-│ printNumber(1)  │
-├─────────────────┤
-│ printNumber(2)  │
-├─────────────────┤
-│ printNumber(3)  │
-└─────────────────┘
-```
+### Approach 1 — Linear Search
 
-When the base case is reached, the functions return in reverse order.
-
-This is called:
-
-> **Last In, First Out (LIFO)**
-
-This is the same principle used by a Stack data structure.
-
----
-
-# 14. Recursion Examples
-
-## 14.1 Print Numbers from N to 1
-
-```java
-public static void printNumbers(int n) {
-
-    if (n == 0) {
-        return;
-    }
-
-    System.out.println(n);
-
-    printNumbers(n - 1);
-}
-```
-
-Calling:
-
-```java
-printNumbers(5);
-```
-
-Output:
-
-```text
-5
-4
-3
-2
-1
-```
-
-### Complexity
-
-Each number is processed once.
-
-```text
-Time: O(n)
-Space: O(n)
-```
-
-The space is `O(n)` because of the recursive call stack.
-
----
-
-# 14.2 Print Numbers from 1 to N
-
-```java
-public static void printNumbers(int n) {
-
-    if (n == 0) {
-        return;
-    }
-
-    printNumbers(n - 1);
-
-    System.out.println(n);
-}
-```
-
-Calling:
-
-```java
-printNumbers(5);
-```
-
-Output:
-
-```text
-1
-2
-3
-4
-5
-```
-
-Notice the difference.
-
-In the previous example, we printed **before** the recursive call.
-
-Here, we print **after** the recursive call.
-
----
-
-# 14.3 Factorial
-
-Factorial of `n`:
-
-```text
-n! = n × (n-1) × (n-2) × ... × 1
-```
-
-For example:
-
-```text
-5! = 5 × 4 × 3 × 2 × 1
-
-5! = 120
-```
-
-Recursive implementation:
-
-```java
-public static int factorial(int n) {
-
-    if (n == 0 || n == 1) {
-        return 1;
-    }
-
-    return n * factorial(n - 1);
-}
-```
-
-Calling:
-
-```java
-factorial(5);
-```
-
-Dry run:
-
-```text
-factorial(5)
-= 5 × factorial(4)
-
-= 5 × 4 × factorial(3)
-
-= 5 × 4 × 3 × factorial(2)
-
-= 5 × 4 × 3 × 2 × factorial(1)
-
-= 5 × 4 × 3 × 2 × 1
-
-= 120
-```
-
-Complexity:
-
-```text
-Time:  O(n)
-Space: O(n)
-```
-
----
-
-# 14.4 Sum of Numbers
-
-Find:
-
-```text
-1 + 2 + 3 + 4 + 5
-```
-
-Recursive solution:
-
-```java
-public static int sum(int n) {
-
-    if (n == 0) {
-        return 0;
-    }
-
-    return n + sum(n - 1);
-}
-```
-
-Calling:
-
-```java
-sum(5);
-```
-
-Dry run:
-
-```text
-sum(5)
-= 5 + sum(4)
-
-= 5 + 4 + sum(3)
-
-= 5 + 4 + 3 + sum(2)
-
-= 5 + 4 + 3 + 2 + sum(1)
-
-= 5 + 4 + 3 + 2 + 1 + sum(0)
-
-= 15
-```
-
-Complexity:
-
-```text
-Time:  O(n)
-Space: O(n)
-```
-
----
-
-# 15. Recursion vs Iteration
-
-The same problem can often be solved using either recursion or a loop.
-
-## Recursive Approach
-
-```java
-public static int sum(int n) {
-
-    if (n == 0) {
-        return 0;
-    }
-
-    return n + sum(n - 1);
-}
-```
-
-Space:
+Check users one by one.
 
 ```text
 O(n)
 ```
 
-because recursive calls are stored on the call stack.
+In the worst case, we may inspect:
+
+```text
+1,000,000 users
+```
 
 ---
 
-## Iterative Approach
+### Approach 2 — Binary Search
 
-```java
-public static int sum(int n) {
-
-    int result = 0;
-
-    for (int i = 1; i <= n; i++) {
-        result += i;
-    }
-
-    return result;
-}
-```
-
-Space:
+If the data is sorted appropriately, we can repeatedly divide the search space.
 
 ```text
-O(1)
+O(log n)
 ```
 
-### Comparison
-
-| Approach | Time | Space |
-|---|---:|---:|
-| Recursion | O(n) | O(n) |
-| Iteration | O(n) | O(1) |
-
-Recursion can make some problems easier to understand, especially:
+Approximately:
 
 ```text
-Trees
-Graphs
-Backtracking
-Divide and Conquer
-Dynamic Programming
+1,000,000
+     ↓
+500,000
+     ↓
+250,000
+     ↓
+...
+     ↓
+1
 ```
 
-But recursion uses call-stack memory.
+This requires far fewer steps.
+
+The important lesson is:
+
+> **The choice of algorithm matters when the input becomes large.**
 
 ---
 
-# 16. Common Beginner Mistakes
+# 27. Common Mistakes
 
-## Mistake 1 — Forgetting the Base Case
+## Mistake 1 — Thinking O(1) Means One Second
 
 Wrong:
 
-```java
-public static void count(int n) {
+> O(1) means the program takes one second.
 
-    System.out.println(n);
+Correct:
 
-    count(n - 1);
-}
-```
+> O(1) means the amount of work does not grow with the input size.
 
-There is no stopping condition.
+---
 
-This can eventually cause:
+## Mistake 2 — Adding Nested Loops
+
+Wrong:
 
 ```text
-StackOverflowError
+O(n + n) = O(n²)
 ```
 
 Correct:
 
-```java
-public static void count(int n) {
-
-    if (n == 0) {
-        return;
-    }
-
-    System.out.println(n);
-
-    count(n - 1);
-}
+```text
+O(n + n) = O(n)
 ```
 
 ---
 
-## Mistake 2 — Confusing Nested and Separate Loops
+## Mistake 3 — Multiplying Separate Loops
 
-Separate loops:
+Wrong:
 
-```java
-for (...) {
-}
-
-for (...) {
-}
+```text
+Two separate loops = O(n²)
 ```
+
+Correct:
+
+```text
+O(n) + O(n) = O(n)
+```
+
+---
+
+## Mistake 4 — Forgetting Space Complexity
+
+When solving a DSA problem, always ask:
+
+```text
+Time Complexity?
+Space Complexity?
+```
+
+---
+
+## Mistake 5 — Ignoring the Input Constraints
+
+Suppose a problem says:
+
+```text
+1 <= n <= 100
+```
+
+An `O(n²)` solution might be completely acceptable.
+
+But if:
+
+```text
+1 <= n <= 1,000,000
+```
+
+an `O(n²)` solution may be too slow.
+
+Therefore:
+
+> **Always check the input constraints before choosing an approach.**
+
+---
+
+# 28. How to Analyze Any Algorithm
+
+Whenever you write a solution, follow these steps.
+
+### Step 1 — Identify the input size
 
 Usually:
 
 ```text
-O(n)
+n
 ```
 
-Nested loops:
-
-```java
-for (...) {
-
-    for (...) {
-
-    }
-}
-```
-
-Usually:
+For two inputs:
 
 ```text
-O(n²)
+n and m
 ```
 
 ---
 
-## Mistake 3 — Assuming More Code Means Higher Complexity
+### Step 2 — Count loops
 
-This:
-
-```java
-System.out.println("A");
-System.out.println("B");
-System.out.println("C");
-System.out.println("D");
-```
-
-is still:
+Ask:
 
 ```text
-O(1)
-```
-
-because the number of operations is constant.
-
----
-
-## Mistake 4 — Forgetting Auxiliary Space
-
-When analyzing an algorithm, don't only consider time.
-
-Always ask:
-
-```text
-Time?
-Space?
+How many times does each loop run?
 ```
 
 ---
 
-# 17. Interview Questions
+### Step 3 — Check whether loops are nested
+
+Sequential:
+
+```text
+O(n) + O(n)
+```
+
+Nested:
+
+```text
+O(n) × O(n)
+```
+
+---
+
+### Step 4 — Check recursion
+
+Ask:
+
+```text
+How many recursive calls are made?
+How deep can the recursion go?
+```
+
+---
+
+### Step 5 — Check additional data structures
+
+Look for:
+
+```text
+Arrays
+HashMaps
+HashSets
+Stacks
+Queues
+Matrices
+```
+
+---
+
+### Step 6 — Simplify
+
+Remove constants:
+
+```text
+O(2n) → O(n)
+```
+
+Keep the dominant term:
+
+```text
+O(n² + n) → O(n²)
+```
+
+---
+
+# 29. Interview Answer Format
+
+When an interviewer asks:
+
+> "What is the time and space complexity of your solution?"
+
+Don't simply answer:
+
+> `O(n)`.
+
+Give a reason.
+
+For example:
+
+> **"The time complexity is O(n) because we traverse the array once. The auxiliary space is O(n) because we store the elements in a HashMap."**
+
+This demonstrates that you understand the reasoning behind the complexity.
+
+---
+
+# 30. Interview Questions
 
 ## Question 1
 
-What is an algorithm?
+What is Time Complexity?
 
 ### Answer
 
-An algorithm is a step-by-step procedure used to solve a particular problem.
+Time Complexity describes how the number of operations performed by an algorithm grows as the input size increases.
 
 ---
 
 ## Question 2
 
-What is a data structure?
+What is Space Complexity?
 
 ### Answer
 
-A data structure is a way of organizing and storing data so that it can be accessed and modified efficiently.
+Space Complexity describes how the additional memory required by an algorithm grows as the input size increases.
 
 ---
 
 ## Question 3
 
-What is Big O?
+What is Big O notation?
 
 ### Answer
 
-Big O notation describes how the time or space requirements of an algorithm grow as the input size increases.
+Big O notation describes the growth rate of an algorithm's time or space requirements as the input size increases.
 
 ---
 
 ## Question 4
 
-What is the time complexity of:
+What is the complexity of:
 
 ```java
 for (int i = 0; i < n; i++) {
@@ -1441,11 +1361,13 @@ for (int i = 0; i < n; i++) {
 O(n)
 ```
 
+Because the loop runs `n` times.
+
 ---
 
 ## Question 5
 
-What is the time complexity of:
+What is the complexity of:
 
 ```java
 for (int i = 0; i < n; i++) {
@@ -1462,17 +1384,51 @@ for (int i = 0; i < n; i++) {
 O(n²)
 ```
 
+Because the inner loop runs `n` times for every iteration of the outer loop.
+
 ---
 
 ## Question 6
 
-What is the space complexity of:
-
-```java
-int[] result = new int[n];
-```
+What is the complexity of Binary Search?
 
 ### Answer
+
+```text
+O(log n)
+```
+
+Because the search space is divided approximately in half during each step.
+
+---
+
+## Question 7
+
+What is the complexity of Merge Sort?
+
+### Answer
+
+```text
+O(n log n)
+```
+
+---
+
+## Question 8
+
+Why do we ignore constants in Big O?
+
+### Answer
+
+Because Big O focuses on the growth rate of an algorithm rather than the exact number of operations.
+
+For example:
+
+```text
+O(5n)
+```
+
+is simplified to:
 
 ```text
 O(n)
@@ -1480,185 +1436,87 @@ O(n)
 
 ---
 
-## Question 7
-
-What is the difference between time and space complexity?
-
-### Answer
-
-**Time Complexity** measures how the execution time grows with input size.
-
-**Space Complexity** measures how the additional memory requirement grows with input size.
-
----
-
-## Question 8
-
-What is a base case in recursion?
-
-### Answer
-
-A base case is the condition that stops recursive calls.
-
-Example:
-
-```java
-if (n == 0) {
-    return;
-}
-```
-
----
-
 ## Question 9
 
-What happens if recursion has no proper base case?
+Why do we remove lower-order terms?
 
 ### Answer
 
-The recursive calls may continue until the call stack is exhausted, resulting in a `StackOverflowError`.
+Because the dominant term determines the growth rate for very large input sizes.
+
+For example:
+
+```text
+O(n² + n)
+```
+
+becomes:
+
+```text
+O(n²)
+```
 
 ---
 
 ## Question 10
 
-What is the difference between recursion and iteration?
+What is a Time-Space Tradeoff?
 
 ### Answer
 
-Recursion uses function calls to repeat an operation, while iteration generally uses loops such as `for` and `while`.
+A Time-Space Tradeoff means using additional memory to improve the execution time of an algorithm.
 
-Recursion uses additional call-stack memory.
-
----
-
-# 18. Practice Problems
-
-Try solving these yourself before looking for solutions.
-
-## Easy
-
-### Problem 1 — Find Maximum
-
-Given:
+Example:
 
 ```text
-[10, 25, 7, 50, 30]
-```
+Two Sum
 
-Find the maximum element.
+Brute Force:
+Time:  O(n²)
+Space: O(1)
 
-Expected output:
-
-```text
-50
-```
-
-Think about:
-
-```text
-Time Complexity?
-Space Complexity?
+HashMap:
+Time:  O(n)
+Space: O(n)
 ```
 
 ---
 
-### Problem 2 — Find Minimum
+# 31. Practice Questions
 
-Given:
+Try to solve these yourself.
 
-```text
-[10, 25, 7, 50, 30]
-```
+## Problem 1
 
-Find the minimum element.
-
-Expected output:
-
-```text
-7
-```
-
----
-
-### Problem 3 — Sum of Array
-
-Given:
-
-```text
-[10, 20, 30, 40]
-```
-
-Return:
-
-```text
-100
-```
-
----
-
-### Problem 4 — Count Even Numbers
-
-Given:
-
-```text
-[10, 15, 20, 25, 30]
-```
-
-Expected output:
-
-```text
-3
-```
-
----
-
-### Problem 5 — Reverse Print
-
-Given:
-
-```text
-1 2 3 4 5
-```
-
-Print:
-
-```text
-5 4 3 2 1
-```
-
-Try solving it using recursion.
-
----
-
-## Complexity Practice
-
-Find the time complexity of each.
-
-### Problem 6
+What is the time complexity?
 
 ```java
 for (int i = 0; i < n; i++) {
-
+    System.out.println(i);
 }
 ```
 
 ---
 
-### Problem 7
+## Problem 2
+
+What is the time complexity?
 
 ```java
 for (int i = 0; i < n; i++) {
 
     for (int j = 0; j < n; j++) {
 
+        System.out.println(i + j);
     }
 }
 ```
 
 ---
 
-### Problem 8
+## Problem 3
+
+What is the time complexity?
 
 ```java
 for (int i = 0; i < n; i++) {
@@ -1672,145 +1530,181 @@ for (int j = 0; j < n; j++) {
 
 ---
 
-### Problem 9
+## Problem 4
+
+What is the time complexity?
 
 ```java
 for (int i = 0; i < n; i++) {
 
-    for (int j = 0; j < n; j++) {
+    for (int j = 0; i < n; j++) {
 
-        for (int k = 0; k < n; k++) {
+    }
+}
+```
 
-        }
+**Be careful!**
+
+Don't answer immediately. Check the loop condition carefully.
+
+---
+
+## Problem 5
+
+What is the space complexity?
+
+```java
+int[] result = new int[n];
+```
+
+---
+
+## Problem 6
+
+What is the space complexity?
+
+```java
+int[][] matrix = new int[n][n];
+```
+
+---
+
+## Problem 7
+
+What is the complexity?
+
+```java
+for (int i = 0; i < n; i++) {
+
+    for (int j = 0; j < m; j++) {
+
     }
 }
 ```
 
 ---
 
-### Problem 10
+## Problem 8
 
-```java
-int[] numbers = new int[n];
-```
-
-Find the space complexity.
-
----
-
-# 19. Key Takeaways
-
-Before moving to the next chapter, make sure you understand these concepts:
+What is the complexity?
 
 ```text
-DSA
- ↓
-Data Structures + Algorithms
-```
-
-### Data Structure
-
-A way of organizing and storing data.
-
-Examples:
-
-```text
-Array
-Linked List
-Stack
-Queue
-HashMap
-Tree
-Graph
-```
-
-### Algorithm
-
-A step-by-step procedure for solving a problem.
-
-### Time Complexity
-
-Describes how execution work grows with input size.
-
-### Space Complexity
-
-Describes how additional memory usage grows with input size.
-
-### Important Complexities
-
-```text
-O(1)       → Constant
-O(log n)   → Logarithmic
-O(n)       → Linear
-O(n log n) → Linearithmic
-O(n²)      → Quadratic
-O(2ⁿ)      → Exponential
-O(n!)      → Factorial
-```
-
-### Recursion
-
-A function calling itself.
-
-Every recursive solution should generally have:
-
-```text
-Base Case
-+
-Recursive Case
-```
-
-### Most Important Interview Habit
-
-Whenever you write a solution, ask yourself:
-
-```text
-1. What is the time complexity?
-2. What is the space complexity?
-3. Can I improve the time?
-4. Can I reduce the space?
-5. Is there a better data structure?
-6. Is there a known problem-solving pattern?
+O(n² + n + 100)
 ```
 
 ---
 
-# Chapter 1 Complete
+## Problem 9
 
-The foundation is now ready.
-
-Next chapters will build on these concepts:
+What is the complexity?
 
 ```text
-Chapter 1 — Basics
-        ↓
-Chapter 2 — Arrays
-        ↓
-Chapter 3 — Strings
-        ↓
-Chapter 4 — Linked List
-        ↓
-Chapter 5 — Stack
-        ↓
-Chapter 6 — Queue
-        ↓
-Chapter 7 — Hashing
-        ↓
-Chapter 8 — Searching & Sorting
-        ↓
-Chapter 9 — Trees
-        ↓
-Chapter 10 — Heap
-        ↓
-Chapter 11 — Graphs
-        ↓
-Chapter 12 — Recursion & Backtracking
-        ↓
-Chapter 13 — Greedy
-        ↓
-Chapter 14 — Dynamic Programming
-        ↓
-Interview Problem Solving
+O(5n + 10)
 ```
 
-> **Goal:** Don't just memorize solutions. Understand the data structure, identify the pattern, write the solution, analyze its complexity, and explain why it works.
+---
+
+## Problem 10
+
+What is the complexity?
+
+```text
+O(n³ + n² + n)
+```
+
+---
+
+# 32. Quick Revision
+
+Before moving to the next topic, remember:
+
+```text
+O(1)
+→ Constant
+
+O(log n)
+→ Logarithmic
+
+O(n)
+→ Linear
+
+O(n log n)
+→ Linearithmic
+
+O(n²)
+→ Quadratic
+
+O(n³)
+→ Cubic
+
+O(2ⁿ)
+→ Exponential
+
+O(n!)
+→ Factorial
+```
+
+### Important Rules
+
+```text
+Sequential loops
+→ Add complexities
+
+Nested loops
+→ Multiply complexities
+
+Ignore constants
+→ O(2n) = O(n)
+
+Keep the dominant term
+→ O(n² + n) = O(n²)
+```
+
+### Always Ask
+
+```text
+1. What is the input size?
+2. How many times does each loop execute?
+3. Are loops nested or sequential?
+4. Is recursion involved?
+5. What additional memory is being used?
+6. Can the solution be optimized?
+```
+
+---
+
+# 33. Final Summary
+
+Time Complexity helps us understand how the running time of an algorithm grows as the input becomes larger.
+
+Space Complexity helps us understand how the additional memory requirement grows.
+
+The most important complexities to remember are:
+
+```text
+O(1)
+O(log n)
+O(n)
+O(n log n)
+O(n²)
+O(2ⁿ)
+O(n!)
+```
+
+The goal of DSA is not simply to write code that works.
+
+The goal is to write code that:
+
+```text
+Works
+   +
+Uses appropriate data structures
+   +
+Has good time complexity
+   +
+Uses reasonable memory
+   +
+Can handle large inputs
+```
+
+> **Good DSA solutions are not only correct — they are efficient.**
