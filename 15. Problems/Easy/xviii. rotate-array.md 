@@ -1,0 +1,854 @@
+# Rotate Array
+
+**Difficulty:** Medium (LeetCode)  
+**LeetCode:** [189. Rotate Array](https://leetcode.com/problems/rotate-array/)  
+**Topics:** Arrays, Two Pointers, Reversal Algorithm, In-place Manipulation
+
+---
+
+## 1. Problem Statement
+
+Given an integer array `nums`, rotate the array to the right by `k` steps, where `k` is non-negative.
+
+Rotating the array to the right means moving each element one position toward the right. The last element moves to the first position.
+
+You must modify the array in place.
+
+### Example 1
+
+**Input:**
+
+```java
+nums = [1, 2, 3, 4, 5, 6, 7]
+k = 3
+```
+
+**Output:**
+
+```java
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+**Explanation:**
+
+Rotate right by one step:
+
+```text
+[7, 1, 2, 3, 4, 5, 6]
+```
+
+Rotate right by two steps:
+
+```text
+[6, 7, 1, 2, 3, 4, 5]
+```
+
+Rotate right by three steps:
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+### Example 2
+
+**Input:**
+
+```java
+nums = [-1, -100, 3, 99]
+k = 2
+```
+
+**Output:**
+
+```java
+[3, 99, -1, -100]
+```
+
+### Example 3
+
+**Input:**
+
+```java
+nums = [1, 2]
+k = 3
+```
+
+**Output:**
+
+```java
+[2, 1]
+```
+
+---
+
+## 2. Understanding the Problem
+
+We need to move the last `k` elements to the beginning of the array.
+
+For example:
+
+```text
+Original array:
+
+[1, 2, 3, 4, 5, 6, 7]
+
+k = 3
+```
+
+The last three elements are:
+
+```text
+[5, 6, 7]
+```
+
+Move them to the beginning:
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+This is called **right rotation**.
+
+### Important Observation
+
+If the array contains `n` elements and `k` is greater than `n`, we do not need to rotate more than `n` times.
+
+For example:
+
+```text
+nums = [1, 2, 3, 4, 5]
+k = 7
+```
+
+Since rotating five times returns the original array:
+
+```text
+7 % 5 = 2
+```
+
+So rotating seven times is equivalent to rotating two times.
+
+Always use:
+
+```java
+k = k % nums.length;
+```
+
+---
+
+## 3. Approach 1: Brute Force (One Rotation at a Time)
+
+The simplest approach is to rotate the array one step at a time.
+
+For each rotation:
+1. Store the last element.
+2. Shift every other element one position to the right.
+3. Put the stored element at index zero.
+
+Repeat this process `k` times.
+
+### Java Code
+
+```java
+import java.util.Arrays;
+
+public class RotateArrayBruteForce {
+
+    public static void rotate(int[] nums, int k) {
+
+        int n = nums.length;
+
+        k = k % n;
+
+        for (int rotation = 0; rotation < k; rotation++) {
+
+            // Store the last element
+            int last = nums[n - 1];
+
+            // Shift elements to the right
+            for (int i = n - 1; i > 0; i--) {
+
+                nums[i] = nums[i - 1];
+            }
+
+            // Move last element to the first position
+            nums[0] = last;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int[] nums = {1, 2, 3, 4, 5, 6, 7};
+
+        rotate(nums, 3);
+
+        System.out.println(Arrays.toString(nums));
+    }
+}
+```
+
+**Output:**
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+### Complexity Analysis
+
+- Time Complexity: O(n × k), because we shift approximately `n` elements for each rotation.
+- Extra Space Complexity: O(1).
+
+This approach is simple but inefficient when `k` is large.
+
+---
+
+## 4. Approach 2: Using an Extra Array
+
+We can create a new array and calculate the final position of every element.
+
+### Main Idea
+
+When rotating right by `k` positions, an element originally at index `i` moves to:
+
+```java
+newIndex = (i + k) % n;
+```
+
+For example:
+
+```text
+nums = [1, 2, 3, 4, 5, 6, 7]
+k = 3
+n = 7
+```
+
+The element at index zero moves to:
+
+```text
+(0 + 3) % 7 = 3
+```
+
+The element at index four moves to:
+
+```text
+(4 + 3) % 7 = 0
+```
+
+### Java Code
+
+```java
+import java.util.Arrays;
+
+public class RotateArrayExtraSpace {
+
+    public static void rotate(int[] nums, int k) {
+
+        int n = nums.length;
+
+        k = k % n;
+
+        int[] result = new int[n];
+
+        for (int i = 0; i < n; i++) {
+
+            int newIndex = (i + k) % n;
+
+            result[newIndex] = nums[i];
+        }
+
+        // Copy result back into original array
+        for (int i = 0; i < n; i++) {
+
+            nums[i] = result[i];
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int[] nums = {1, 2, 3, 4, 5, 6, 7};
+
+        rotate(nums, 3);
+
+        System.out.println(Arrays.toString(nums));
+    }
+}
+```
+
+**Output:**
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+### Complexity Analysis
+
+- Time Complexity: O(n).
+- Extra Space Complexity: O(n), because we create another array.
+
+This is efficient, but it does not satisfy the O(1) extra-space requirement.
+
+---
+
+## 5. Approach 3: Reversal Algorithm (Optimal)
+
+This is the recommended interview solution.
+
+The reversal algorithm rotates the array using three reverse operations.
+
+### Main Idea
+
+Suppose:
+
+```text
+nums = [1, 2, 3, 4, 5, 6, 7]
+k = 3
+```
+
+Divide the array into two parts:
+
+```text
+First part  = [1, 2, 3, 4]
+Second part = [5, 6, 7]
+```
+
+Perform these operations:
+
+**Step 1: Reverse the entire array**
+
+```text
+[1, 2, 3, 4, 5, 6, 7]
+
+After reversing:
+
+[7, 6, 5, 4, 3, 2, 1]
+```
+
+**Step 2: Reverse the first k elements**
+
+```text
+[7, 6, 5, 4, 3, 2, 1]
+
+Reverse first 3 elements:
+
+[5, 6, 7, 4, 3, 2, 1]
+```
+
+**Step 3: Reverse the remaining elements**
+
+```text
+[5, 6, 7, 4, 3, 2, 1]
+
+Reverse elements from index 3 to 6:
+
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+Final result:
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+### Java Code
+
+```java
+import java.util.Arrays;
+
+public class RotateArray {
+
+    public static void rotate(int[] nums, int k) {
+
+        int n = nums.length;
+
+        if (n == 0) {
+            return;
+        }
+
+        k = k % n;
+
+        // Step 1: Reverse the entire array
+        reverse(nums, 0, n - 1);
+
+        // Step 2: Reverse the first k elements
+        reverse(nums, 0, k - 1);
+
+        // Step 3: Reverse the remaining elements
+        reverse(nums, k, n - 1);
+    }
+
+    private static void reverse(int[] nums, int left, int right) {
+
+        while (left < right) {
+
+            int temp = nums[left];
+
+            nums[left] = nums[right];
+
+            nums[right] = temp;
+
+            left++;
+            right--;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int[] nums = {1, 2, 3, 4, 5, 6, 7};
+
+        rotate(nums, 3);
+
+        System.out.println(Arrays.toString(nums));
+    }
+}
+```
+
+**Output:**
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+---
+
+## 6. Detailed Dry Run
+
+Let's understand the optimal solution step by step.
+
+**Input:**
+
+```text
+nums = [1, 2, 3, 4, 5, 6, 7]
+k = 3
+```
+
+Initial values:
+
+```java
+n = 7;
+k = 3;
+```
+
+### Step 1: Reverse the Entire Array
+
+Method call:
+
+```java
+reverse(nums, 0, 6);
+```
+
+Initial positions:
+
+```text
+left = 0
+right = 6
+```
+
+Swap index 0 and index 6:
+
+```text
+[7, 2, 3, 4, 5, 6, 1]
+```
+
+Move pointers inward.
+
+Swap index 1 and index 5:
+
+```text
+[7, 6, 3, 4, 5, 2, 1]
+```
+
+Swap index 2 and index 4:
+
+```text
+[7, 6, 5, 4, 3, 2, 1]
+```
+
+Now both pointers meet at index 3. Stop.
+
+Result after Step 1:
+
+```text
+[7, 6, 5, 4, 3, 2, 1]
+```
+
+### Step 2: Reverse the First k Elements
+
+Method call:
+
+```java
+reverse(nums, 0, 2);
+```
+
+We reverse:
+
+```text
+[7, 6, 5]
+```
+
+Swap index 0 and index 2:
+
+```text
+[5, 6, 7, 4, 3, 2, 1]
+```
+
+Result after Step 2:
+
+```text
+[5, 6, 7, 4, 3, 2, 1]
+```
+
+### Step 3: Reverse the Remaining Elements
+
+Method call:
+
+```java
+reverse(nums, 3, 6);
+```
+
+We reverse:
+
+```text
+[4, 3, 2, 1]
+```
+
+Swap index 3 and index 6:
+
+```text
+[5, 6, 7, 1, 3, 2, 4]
+```
+
+Swap index 4 and index 5:
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+Final result:
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+---
+
+## 7. Dry Run Summary
+
+| Step | Operation | Array |
+|---|---|---|
+| Initial | Original array | `[1,2,3,4,5,6,7]` |
+| 1 | Reverse entire array | `[7,6,5,4,3,2,1]` |
+| 2 | Reverse first 3 elements | `[5,6,7,4,3,2,1]` |
+| 3 | Reverse remaining elements | `[5,6,7,1,2,3,4]` |
+
+Final answer:
+
+```text
+[5, 6, 7, 1, 2, 3, 4]
+```
+
+---
+
+## 8. Why Does the Reversal Algorithm Work?
+
+Let's divide the original array into two parts:
+
+```text
+A = [1, 2, 3, 4]
+B = [5, 6, 7]
+```
+
+We want:
+
+```text
+B + A
+```
+
+Original array:
+
+```text
+A + B
+```
+
+Reverse the entire array:
+
+```text
+reverse(B) + reverse(A)
+```
+
+Reverse the first part:
+
+```text
+B + reverse(A)
+```
+
+Reverse the second part:
+
+```text
+B + A
+```
+
+This produces the required right rotation.
+
+The important idea is that reversing each section again restores its original internal order.
+
+---
+
+## 9. Understanding the Reverse Method
+
+The reverse method uses two pointers.
+
+```java
+private static void reverse(int[] nums, int left, int right) {
+
+    while (left < right) {
+
+        int temp = nums[left];
+
+        nums[left] = nums[right];
+
+        nums[right] = temp;
+
+        left++;
+        right--;
+    }
+}
+```
+
+### How It Works
+
+For example:
+
+```text
+[1, 2, 3, 4, 5]
+```
+
+Initial pointers:
+
+```text
+left = 0
+right = 4
+```
+
+Swap:
+
+```text
+[5, 2, 3, 4, 1]
+```
+
+Move both pointers inward.
+
+Swap:
+
+```text
+[5, 4, 3, 2, 1]
+```
+
+The pointers meet, so the reversal is complete.
+
+This is a common two-pointer pattern used in many array and string problems.
+
+---
+
+## 10. Edge Cases
+
+| Input Array | k | Expected Output | Explanation |
+|---|---:|---|---|
+| `[1,2,3,4,5,6,7]` | 3 | `[5,6,7,1,2,3,4]` | Normal rotation |
+| `[1,2,3,4,5]` | 2 | `[4,5,1,2,3]` | Rotate twice |
+| `[1,2]` | 3 | `[2,1]` | `3 % 2 = 1` |
+| `[1,2,3]` | 3 | `[1,2,3]` | Full rotation |
+| `[1,2,3]` | 0 | `[1,2,3]` | No rotation |
+| `[1]` | 10 | `[1]` | Single element |
+| `[9,8,7,6]` | 1 | `[6,9,8,7]` | One right rotation |
+
+---
+
+## 11. Important: Left Rotation vs. Right Rotation
+
+There are two types of array rotation.
+
+### Right Rotation
+
+Move the last `k` elements to the beginning.
+
+Example:
+
+```text
+Original:
+[1, 2, 3, 4, 5]
+
+Right rotate by 2:
+
+[4, 5, 1, 2, 3]
+```
+
+### Left Rotation
+
+Move the first `k` elements to the end.
+
+Example:
+
+```text
+Original:
+[1, 2, 3, 4, 5]
+
+Left rotate by 2:
+
+[3, 4, 5, 1, 2]
+```
+
+For left rotation, the reversal operations are:
+
+```java
+reverse(nums, 0, k - 1);
+reverse(nums, k, n - 1);
+reverse(nums, 0, n - 1);
+```
+
+Remember the difference:
+
+- Right rotation: Reverse entire array, first k elements, then remaining elements.
+- Left rotation: Reverse first k elements, remaining elements, then entire array.
+
+---
+
+## 12. Complexity Analysis
+
+Let `n` be the length of the array.
+
+| Approach | Time Complexity | Extra Space |
+|---|---|---|
+| Brute Force | O(n × k) | O(1) |
+| Extra Array | O(n) | O(n) |
+| Reversal Algorithm | O(n) | O(1) |
+
+### Why Is Reversal O(n)?
+
+We perform three reversals:
+
+1. Reverse the entire array: O(n).
+2. Reverse the first k elements: O(k).
+3. Reverse the remaining elements: O(n - k).
+
+Total:
+
+```text
+O(n) + O(k) + O(n - k)
+
+= O(3n)
+
+= O(n)
+```
+
+We use only a temporary variable and two pointers, so extra space is O(1).
+
+---
+
+## 13. Interview Questions
+
+### Q1. What is array rotation?
+
+Array rotation means moving elements from one end of an array to the other while maintaining their relative order.
+
+### Q2. Why do we use `k % n`?
+
+Because rotating an array `n` times returns it to its original position.
+
+Therefore, rotations greater than `n` can be reduced using modulo.
+
+### Q3. What is the reversal algorithm?
+
+It is an in-place technique that uses multiple reversals to rearrange array elements.
+
+### Q4. Why do we reverse the entire array first?
+
+This places the last `k` elements at the beginning, but their internal order is reversed. The next two reversals restore the correct order.
+
+### Q5. What is the time complexity?
+
+O(n), because each element participates in a constant number of swaps.
+
+### Q6. What is the space complexity?
+
+O(1), because we modify the original array without creating another array.
+
+### Q7. Can we solve this problem using an extra array?
+
+Yes. We can calculate the new index of each element using:
+
+```java
+newIndex = (i + k) % n;
+```
+
+But that requires O(n) extra space.
+
+### Q8. What is the difference between left and right rotation?
+
+- Right rotation moves the last elements to the beginning.
+- Left rotation moves the first elements to the end.
+
+---
+
+## 14. Practice Problems
+
+Try these problems to strengthen your understanding of array manipulation and two pointers.
+
+1. [Rotate List – LeetCode 61](https://leetcode.com/problems/rotate-list/)
+2. [Reverse String – LeetCode 344](https://leetcode.com/problems/reverse-string/)
+3. [Reverse Words in a String III – LeetCode 557](https://leetcode.com/problems/reverse-words-in-a-string-iii/)
+4. [Reverse Array – GeeksforGeeks](https://www.geeksforgeeks.org/problems/reverse-an-array/0)
+
+---
+
+## 15. Final Summary
+
+We learned three approaches:
+
+1. Brute Force – rotate one position at a time.
+2. Extra Array – calculate the new index of every element.
+3. Reversal Algorithm – reverse the entire array and then reverse its two sections.
+
+### Recommended Interview Solution
+
+```java
+public void rotate(int[] nums, int k) {
+
+    int n = nums.length;
+
+    if (n == 0) {
+        return;
+    }
+
+    k = k % n;
+
+    reverse(nums, 0, n - 1);
+
+    reverse(nums, 0, k - 1);
+
+    reverse(nums, k, n - 1);
+}
+
+private void reverse(int[] nums, int left, int right) {
+
+    while (left < right) {
+
+        int temp = nums[left];
+
+        nums[left] = nums[right];
+
+        nums[right] = temp;
+
+        left++;
+        right--;
+    }
+}
+```
+
+**Remember these important concepts:**
+
+- Use modulo to handle rotations greater than the array length.
+- Use two pointers to reverse an array.
+- Use the reversal algorithm for in-place rotation.
+- Always check for an empty array before using modulo.
+
+**Important interview takeaway:** The reversal algorithm is a useful pattern for array rotation and can also be applied to string and sequence manipulation problems.

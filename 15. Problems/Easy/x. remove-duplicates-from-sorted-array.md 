@@ -1,0 +1,572 @@
+# Remove Duplicates from Sorted Array
+
+**Difficulty:** Easy  
+**Topics:** Array, Two Pointers, In-Place Modification  
+**LeetCode:** 26
+
+---
+
+## 1. Problem Statement
+
+Given an integer array `nums` sorted in non-decreasing order, remove the duplicates in-place so that each unique element appears only once.
+
+The relative order of the elements must remain the same.
+
+Return the number of unique elements, `k`.
+
+The first `k` elements of the modified array should contain the unique elements in sorted order.
+
+**Important:**
+
+- You must modify the original array.
+- Do not create another array.
+- Use O(1) extra space.
+- You only need to return `k`. Elements beyond index `k - 1` do not matter.
+
+### Example 1
+
+**Input:**
+
+```java
+nums = [1, 1, 2]
+```
+
+**Output:**
+
+```text
+2
+```
+
+**Modified array:**
+
+```text
+[1, 2, _]
+```
+
+**Explanation:**
+
+There are two unique elements: `1` and `2`.
+
+### Example 2
+
+**Input:**
+
+```java
+nums = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+```
+
+**Output:**
+
+```text
+5
+```
+
+**Modified array:**
+
+```text
+[0, 1, 2, 3, 4, _, _, _, _, _]
+```
+
+**Explanation:**
+
+The unique elements are:
+
+```text
+[0, 1, 2, 3, 4]
+```
+
+### Example 3
+
+**Input:**
+
+```java
+nums = [1, 2, 3, 4]
+```
+
+**Output:**
+
+```text
+4
+```
+
+Every element is already unique.
+
+---
+
+## 2. Understanding the Problem
+
+Consider this array:
+
+```text
+[1, 1, 2, 2, 3, 3, 4]
+```
+
+We need to remove duplicate values.
+
+Expected result:
+
+```text
+[1, 2, 3, 4]
+```
+
+Since the array is already sorted, duplicate elements are always next to each other.
+
+For example:
+
+```text
+[1, 1, 2, 2, 3, 3, 4]
+     ↑     ↑     ↑
+  Duplicates
+```
+
+This sorted property makes the Two Pointers approach possible.
+
+---
+
+## 3. Approach 1: Using an Extra Array
+
+### Concept
+
+Create a new array and store only unique elements.
+
+Steps:
+
+1. Create a new array.
+2. Traverse the original array.
+3. Compare each element with the last inserted element.
+4. Insert only unique elements.
+5. Copy the unique elements back into the original array.
+
+### Java Code
+
+```java
+import java.util.Arrays;
+
+public class RemoveDuplicatesExtraArray {
+
+    public static int removeDuplicates(int[] nums) {
+
+        if (nums.length == 0) {
+            return 0;
+        }
+
+        int[] result = new int[nums.length];
+
+        int index = 0;
+
+        for (int num : nums) {
+
+            if (index == 0 || result[index - 1] != num) {
+
+                result[index] = num;
+
+                index++;
+            }
+        }
+
+        for (int i = 0; i < index; i++) {
+            nums[i] = result[i];
+        }
+
+        return index;
+    }
+
+    public static void main(String[] args) {
+
+        int[] nums = {1, 1, 2, 2, 3, 3, 4};
+
+        int k = removeDuplicates(nums);
+
+        System.out.println("Unique count: " + k);
+
+        System.out.println(
+            Arrays.toString(Arrays.copyOf(nums, k))
+        );
+    }
+}
+```
+
+**Output:**
+
+```text
+Unique count: 4
+[1, 2, 3, 4]
+```
+
+### Complexity Analysis
+
+- Time Complexity: O(n)
+- Space Complexity: O(n)
+
+This approach works, but it does not satisfy the O(1) extra-space requirement.
+
+---
+
+## 4. Approach 2: Two Pointers (Optimized)
+
+### Concept
+
+Use two pointers:
+
+- `i`: Tracks the position of the last unique element.
+- `j`: Traverses the array to find the next unique element.
+
+Initially:
+
+```java
+int i = 0;
+```
+
+Start `j` from index `1`.
+
+For every element:
+
+1. Compare `nums[j]` with `nums[i]`.
+2. If both are equal, it is a duplicate. Skip it.
+3. If they are different, increment `i`.
+4. Copy `nums[j]` into `nums[i]`.
+
+Finally, return:
+
+```java
+i + 1
+```
+
+Why `i + 1`?
+
+Because array indices start from zero, while the number of unique elements is one greater than the final unique-element index.
+
+### Java Code
+
+```java
+import java.util.Arrays;
+
+public class RemoveDuplicatesOptimized {
+
+    public static int removeDuplicates(int[] nums) {
+
+        if (nums.length == 0) {
+            return 0;
+        }
+
+        int i = 0;
+
+        for (int j = 1; j < nums.length; j++) {
+
+            if (nums[j] != nums[i]) {
+
+                i++;
+
+                nums[i] = nums[j];
+            }
+        }
+
+        return i + 1;
+    }
+
+    public static void main(String[] args) {
+
+        int[] nums = {0, 0, 1, 1, 1, 2, 2, 3, 3, 4};
+
+        int k = removeDuplicates(nums);
+
+        System.out.println("Unique count: " + k);
+
+        System.out.println(
+            Arrays.toString(Arrays.copyOf(nums, k))
+        );
+    }
+}
+```
+
+**Output:**
+
+```text
+Unique count: 5
+[0, 1, 2, 3, 4]
+```
+
+---
+
+## 5. Detailed Dry Run
+
+**Input:**
+
+```java
+nums = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+```
+
+Initial values:
+
+```java
+i = 0;
+j = 1;
+```
+
+The first element is already considered unique.
+
+| Step | i | j | nums[i] | nums[j] | Action |
+|---|---:|---:|---:|---:|---|
+| 1 | 0 | 1 | 0 | 0 | Duplicate, skip |
+| 2 | 0 | 2 | 0 | 1 | Increment i, copy 1 |
+| 3 | 1 | 3 | 1 | 1 | Duplicate, skip |
+| 4 | 1 | 4 | 1 | 1 | Duplicate, skip |
+| 5 | 1 | 5 | 1 | 2 | Increment i, copy 2 |
+| 6 | 2 | 6 | 2 | 2 | Duplicate, skip |
+| 7 | 2 | 7 | 2 | 3 | Increment i, copy 3 |
+| 8 | 3 | 8 | 3 | 3 | Duplicate, skip |
+| 9 | 3 | 9 | 3 | 4 | Increment i, copy 4 |
+
+Final array:
+
+```text
+[0, 1, 2, 3, 4, 2, 2, 3, 3, 4]
+```
+
+Remember: elements beyond the first `k` positions do not matter.
+
+Final values:
+
+```java
+i = 4;
+
+k = i + 1;
+
+k = 5;
+```
+
+The first five elements are:
+
+```text
+[0, 1, 2, 3, 4]
+```
+
+---
+
+## 6. Visual Understanding of Two Pointers
+
+Consider:
+
+```text
+nums = [1, 1, 2, 2, 3]
+```
+
+Initially:
+
+```text
+ i
+ ↓
+[1, 1, 2, 2, 3]
+    ↑
+    j
+```
+
+`nums[i] == nums[j]`, so skip the duplicate.
+
+Next:
+
+```text
+ i
+ ↓
+[1, 1, 2, 2, 3]
+       ↑
+       j
+```
+
+Now `nums[i] != nums[j]`.
+
+Move `i` forward and copy the new unique value:
+
+```text
+[1, 2, 2, 2, 3]
+    ↑
+    i
+```
+
+Continue the same process until the end.
+
+Final unique portion:
+
+```text
+[1, 2, 3]
+```
+
+---
+
+## 7. Why Does This Approach Work?
+
+The algorithm works because the array is sorted.
+
+All duplicate occurrences of a value appear next to each other.
+
+Therefore, comparing the current element with the last unique element is sufficient.
+
+The pointer `i` always represents the last position containing a unique value.
+
+Whenever a new value appears:
+
+- Move `i` forward.
+- Store that value at the new position.
+
+This ensures that unique elements remain in their original sorted order.
+
+---
+
+## 8. Complexity Analysis
+
+Let `n` be the array length.
+
+| Approach | Time Complexity | Extra Space |
+|---|---|---|
+| Extra Array | O(n) | O(n) |
+| Two Pointers | O(n) | O(1) |
+
+**Why is the optimized solution O(n)?**
+
+- Pointer `j` traverses the array once.
+- Pointer `i` moves forward only when a new unique element is found.
+- Each iteration performs constant-time operations.
+
+Therefore:
+
+\[
+Time = O(n)
+\]
+
+\[
+Space = O(1)
+\]
+
+---
+
+## 9. Edge Cases
+
+| Input | Expected k | Unique Elements |
+|---|---:|---|
+| `[1, 1, 2]` | 2 | `[1, 2]` |
+| `[0, 0, 1, 1, 2]` | 3 | `[0, 1, 2]` |
+| `[1, 2, 3, 4]` | 4 | `[1, 2, 3, 4]` |
+| `[1, 1, 1, 1]` | 1 | `[1]` |
+| `[5]` | 1 | `[5]` |
+| `[]` | 0 | `[]` |
+
+---
+
+## 10. Common Interview Mistakes
+
+**Mistake 1: Forgetting the sorted-array condition**
+
+This approach depends on duplicates appearing next to each other.
+
+It does not directly work for an unsorted array.
+
+**Mistake 2: Starting both pointers at zero**
+
+We can start `i` at zero and `j` at one because the first element is already unique.
+
+**Mistake 3: Incrementing the wrong pointer**
+
+Only increment `i` when a new unique element is found.
+
+Pointer `j` traverses the array in every iteration.
+
+**Mistake 4: Returning i instead of i + 1**
+
+Incorrect:
+
+```java
+return i;
+```
+
+Correct:
+
+```java
+return i + 1;
+```
+
+Because the count is one greater than the final index.
+
+**Mistake 5: Returning the complete modified array**
+
+The problem asks for the count of unique elements, not a new array.
+
+---
+
+## 11. Interview Questions
+
+**Q1. Why is the array required to be sorted?**
+
+Because duplicates appear next to each other, so we only need to compare adjacent unique values.
+
+**Q2. What is the purpose of pointer `i`?**
+
+It tracks the position of the last unique element.
+
+**Q3. What is the purpose of pointer `j`?**
+
+It traverses the array to find new unique elements.
+
+**Q4. Why do we return `i + 1`?**
+
+Because `i` represents an index, while the answer represents a count.
+
+**Q5. What is the time complexity?**
+
+O(n), because the array is traversed once.
+
+**Q6. What is the space complexity?**
+
+O(1), because no additional data structure is required.
+
+**Q7. Can we use HashSet?**
+
+Yes, but it requires O(n) extra space and does not satisfy the in-place requirement.
+
+**Q8. Can this algorithm work on an unsorted array?**
+
+Not directly. We would need to sort the array first or use a different approach. Sorting would also change the original order.
+
+---
+
+## 12. Practice Tasks
+
+Try these variations:
+
+- [ ] Remove duplicates from a sorted array using a HashSet.
+- [ ] Remove duplicates from an unsorted array while preserving order.
+- [ ] Remove duplicates from a sorted array where each element can appear at most twice.
+- [ ] Count the number of unique elements.
+- [ ] Remove all occurrences of a specific value.
+- [ ] Find the number that appears most frequently in an array.
+
+---
+
+## 13. Key Takeaways
+
+- This problem uses the Two Pointers technique.
+- The input array must be sorted.
+- Pointer `i` tracks the last unique element.
+- Pointer `j` searches for the next unique element.
+- Duplicate elements are skipped.
+- New unique elements are copied into the next available position.
+- The optimized solution uses O(n) time and O(1) extra space.
+
+**Most important pattern to remember:**
+
+```java
+int i = 0;
+
+for (int j = 1; j < nums.length; j++) {
+
+    if (nums[j] != nums[i]) {
+
+        i++;
+
+        nums[i] = nums[j];
+    }
+}
+
+return nums.length == 0 ? 0 : i + 1;
+```
+
+This Two Pointers pattern is useful in many array problems involving duplicates, in-place modifications, and sorted data.
